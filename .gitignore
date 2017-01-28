@@ -91,3 +91,7 @@ ENV/
 # Cloud9 IDE - http://c9.io
 .c9revisions
 .c9
+
+#install files
+Anaconda3-4.2.0-Linux-x86_64.sh
+docker-run-image.sh
