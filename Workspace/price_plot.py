@@ -42,22 +42,22 @@ def fill_missing_datas(df):
     df.fillna(method='ffill', inplace='TRUE')
     df.fillna(method='ffill', inplace='TRUE')
 
-def mean(df):
+def get_mean(df):
     return df.mean()
     
-def standardDeviation(df):
+def get_standard_deviation(df):
     return df.std()
 
-def median(df):
+def get_median(df):
     return df.median()
     
-def rolling_mean(df, days):
+def get_rolling_mean(df, days):
     return df.rolling(window=days).mean()
 
-def rolling_std(df, days):
+def get_rolling_std(df, days):
     return df.rolling(window=days).std()
 
-def rolling_median(df, days):
+def get_rolling_median(df, days):
     return df.rolling(window=days).median()
 
 ###
@@ -65,9 +65,9 @@ def test_run():
     df= multiTicksDataFrame(['AAPL','MSFT','GOOG'], datetime.strptime("01/01/2017", "%d/%m/%Y"), datetime.strptime("24/01/2017", "%d/%m/%Y"), "Close")
     df= normalize_data(df)
     fill_missing_datas(df)
-    print("mean: "+str(mean(df)))
-    print("standard deviation: "+str(standardDeviation(df)))
-    print("median: "+str(median(df)))
+    print("mean: "+str(get_mean(df)))
+    print("standard deviation: "+str(get_standard_deviation(df)))
+    print("median: "+str(get_median(df)))
     plotDataFrame(df)
     
 test_run()
