@@ -20,15 +20,34 @@ def get_url(symbol, startdate, enddate):
     print(url)
     return url
 
-def plotDataFrame(df):
-    pl= df.plot()
-    fig= pl.get_figure()
-    fig.savefig("fig.svg", format="svg")
+def plot_dataFrame(df, title, xlabel, ylabel, font_size):
+    plt= df.plot(title= title, fontsize= font_size)
+    plt.set_xlabel(xlabel)
+    plt.set_ylabel(ylabel)
+    return plt
+    
+def save_plot(plot, file_format):
+    #legend = plot.legend(loc=0, shadow=True)
+    fig= plot.get_figure()
+    fig.savefig("fig.svg", format=file_format)
+    return plot
+
+def add_data_plot(plot, label, data):
+    data.plot(label= label, ax= plot)
+    return plot
+    
+def plot_histogram(df, bins):
+    fig, ax = plt.subplots()
+    n, bins, patches = ax.hist(df, bins, normed=1)
+    return  ax
+
+def add_vertical_line(plot, data, color, line_style, line_width):
+    return plot.axvline(data, color=color, linestyle= line_style, linewidth= line_width)
 
 def normalize_data(df):
     return df / df.ix[0,:]
     
-def multiTicksDataFrame(ticksList, startDate, endDate, column):
+def multi_ticks_dataFrame(ticksList, startDate, endDate, column):
     dates= pd.date_range(startDate, endDate)
     df= pd.DataFrame(index=dates)
     for tick in ticksList:
@@ -41,6 +60,7 @@ def multiTicksDataFrame(ticksList, startDate, endDate, column):
 def fill_missing_datas(df):
     df.fillna(method='ffill', inplace='TRUE')
     df.fillna(method='ffill', inplace='TRUE')
+    return df
 
 def get_mean(df):
     return df.mean()
@@ -59,15 +79,41 @@ def get_rolling_std(df, days):
 
 def get_rolling_median(df, days):
     return df.rolling(window=days).median()
+    
+def get_bollinger_band(rm, std):
+    upper_band= rm+2*std 
+    lower_band= rm-2*std
+    return upper_band, lower_band
 
-###
+def compute_daily_return(df):
+    daily_returns= df.copy()
+    daily_returns[1:]=(df[1:]/df[:-1].values)-1
+    daily_returns.ix[0,:]=0
+    return daily_returns
+    
+def compute_cumulative_return(df, start, end):
+    return (df[start]/df[end].values)-1
+    
 def test_run():
-    df= multiTicksDataFrame(['AAPL','MSFT','GOOG'], datetime.strptime("01/01/2017", "%d/%m/%Y"), datetime.strptime("24/01/2017", "%d/%m/%Y"), "Close")
-    df= normalize_data(df)
+    df= multi_ticks_dataFrame(['AAPL','MSFT','GOOG'], datetime.strptime("01/01/2016", "%d/%m/%Y"), datetime.strptime("28/01/2017", "%d/%m/%Y"), "Close")
     fill_missing_datas(df)
+    df= compute_daily_return(df)
+    print(df)
+    #df= normalize_data(df)
+    #print(df)
     print("mean: "+str(get_mean(df)))
     print("standard deviation: "+str(get_standard_deviation(df)))
     print("median: "+str(get_median(df)))
-    plotDataFrame(df)
+    plot= plot_histogram(df['AAPL'], 20)
+    mean= get_mean(df['AAPL'])
+    std= get_standard_deviation(df['AAPL'])
+    plot= add_vertical_line(plot, mean, 'w', 'dashed', 2)
+    plot= add_vertical_line(plot, std, 'r', 'dashed', 2)
+    plot= add_vertical_line(plot, -std, 'r', 'dashed', 2)
+    #plot= add_data_plot(plot,"Rolling Mean", get_rolling_mean(df['AAPL'],20))
+    #upper, lower=get_bollinger_band(get_rolling_mean(df['AAPL'],20), get_rolling_std(df['AAPL'],20))
+    #plot= add_data_plot(plot,"Upper Band", upper)
+    #plot= add_data_plot(plot,"Lower Band", lower)
+    save_plot(plot, "svg")
     
 test_run()
