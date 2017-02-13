@@ -1,8 +1,30 @@
-FROM kdelfour/cloud9-docker
+FROM continuumio/anaconda
 MAINTAINER myself
-RUN apt-get -qq update
-#RUN apt-get -qq -y install curl 
-#RUN curl -O -v "https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh"
-COPY Anaconda3-4.2.0-Linux-x86_64.sh /home/
-RUN chmod 777 /home/Anaconda3-4.2.0-Linux-x86_64.sh
-RUN bash /home/Anaconda3-4.2.0-Linux-x86_64.sh -b -p $HOME/anaconda
+
+# Add code directory containing application code
+ADD . /code
+
+#switch working directory to /code folder
+WORKDIR /code
+
+# Creating environment (sandbox instance called py3 [choose the name you want])
+RUN conda create -q -n py3 python=3 ipython
+
+# Activating created environment
+RUN /bin/bash -c "source activate py3"
+
+# Install package manager pip
+RUN conda install -q pip
+
+# which ipython is to be used in the environment? pip freeze shows it
+RUN pip freeze
+
+# Installing ipython notebook
+RUN conda install -q ipython-notebook
+
+# Installing the packages
+RUN pip install -q numpy
+RUN pip install -q pandas
+RUN pip install -q matplotlib
+
+CMD ["python", "price_plot.py"]

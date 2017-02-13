@@ -36,13 +36,14 @@ def add_data_plot(plot, label, data):
     data.plot(label= label, ax= plot)
     return plot
     
-def plot_histogram(df, bins):
+def plot_histogram(df, bins, label):
+    #df.hist(bins=bins, label=label)
     fig, ax = plt.subplots()
     n, bins, patches = ax.hist(df, bins, normed=1)
     return  ax
 
 def add_vertical_line(plot, data, color, line_style, line_width):
-    return plot.axvline(data, color=color, linestyle= line_style, linewidth= line_width)
+    plot.axvline(data, color=color, linestyle= line_style, linewidth= line_width)
 
 def normalize_data(df):
     return df / df.ix[0,:]
@@ -104,12 +105,13 @@ def test_run():
     print("mean: "+str(get_mean(df)))
     print("standard deviation: "+str(get_standard_deviation(df)))
     print("median: "+str(get_median(df)))
-    plot= plot_histogram(df['AAPL'], 20)
+    plot= plot_histogram(df['AAPL'], 20, "AAPL")
+    plot= plot_histogram(df['MSFT'], 20, "MSF T")
     mean= get_mean(df['AAPL'])
     std= get_standard_deviation(df['AAPL'])
-    plot= add_vertical_line(plot, mean, 'w', 'dashed', 2)
-    plot= add_vertical_line(plot, std, 'r', 'dashed', 2)
-    plot= add_vertical_line(plot, -std, 'r', 'dashed', 2)
+    add_vertical_line(plot, mean, 'w', 'dashed', 2)
+    add_vertical_line(plot, -std, 'r', 'dashed', 2)
+    add_vertical_line(plot, std, 'r', 'dashed', 2)
     #plot= add_data_plot(plot,"Rolling Mean", get_rolling_mean(df['AAPL'],20))
     #upper, lower=get_bollinger_band(get_rolling_mean(df['AAPL'],20), get_rolling_std(df['AAPL'],20))
     #plot= add_data_plot(plot,"Upper Band", upper)
