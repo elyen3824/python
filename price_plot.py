@@ -40,7 +40,7 @@ def plot_histogram(df, bins, label):
     #df.hist(bins=bins, label=label)
     fig, ax = plt.subplots()
     n, bins, patches = ax.hist(df, bins, normed=1)
-    return  ax
+    #return  ax
 
 def add_vertical_line(plot, data, color, line_style, line_width):
     plot.axvline(data, color=color, linestyle= line_style, linewidth= line_width)
@@ -105,8 +105,8 @@ def test_run():
     print("mean: "+str(get_mean(df)))
     print("standard deviation: "+str(get_standard_deviation(df)))
     print("median: "+str(get_median(df)))
-    plot= plot_histogram(df['AAPL'], 20, "AAPL")
-    plot= plot_histogram(df['MSFT'], 20, "MSF T")
+    plot_histogram(df['AAPL'], 20, "AAPL")
+    plot_histogram(df['MSFT'], 20, "MSF T")
     mean= get_mean(df['AAPL'])
     std= get_standard_deviation(df['AAPL'])
     add_vertical_line(plot, mean, 'w', 'dashed', 2)
